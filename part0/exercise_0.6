@@ -1,0 +1,15 @@
+title exercise 0.6
+
+note left of browser: user submits a new note to spa
+
+note over browser: browser executes the event handler that:
+
+note over browser: 
+1. creates a new note
+2. adds the new note to notes 
+3. rerenders the notes list page
+4. sends the new note to the server
+end note
+
+browser->server: HTTP POST https://studies.cs.helsinki.fi/exampleapp/new_note_spa
+server-->browser: HTTP status 201
