@@ -24,29 +24,45 @@ const App = () => {
     'Programming without an extremely heavy use of console.log is same as if a doctor would refuse to use x-rays or blood tests when diagnosing patients'
   ]
 
-  const [selected, setSelected] = useState(0)
-
-  const [points, setPoints] = useState(new Array(anecdotes.length).fill(0))
-
-  const nextAnecdote = () => {
-    const randomNumber = Math.floor(Math.random() * anecdotes.length )
-    setSelected(randomNumber)
+  // random number generator
+  // needed to establish the first selected anecdote and
+  // for the 'next anecdote' button
+  const generateRandomNumber = () => {
+    return( Math.floor(Math.random() * anecdotes.length ))
   }
 
+  const [selected, setSelected] = useState(generateRandomNumber)
+
+  // state of points'array filled with 0
+  const [points, setPoints] = useState(new Array(anecdotes.length).fill(0))
+
+  // state to select the max value from 'points' array
+  const [maxVote, setMaxVote] = useState(Math.max(...points))
+
+  // function to vote: it changes the points value of the anecdote
+  // and re-states the max value
   const voteAnecdote = () => {
     const copy = [...points]
     copy[selected] += 1
     setPoints(copy)
+    setMaxVote(Math.max(...copy))
   }
 
   return (
     <div>
+      <h1>Anecdote of the day</h1>
       <div>
         {anecdotes[selected]}
       </div>
       <Votes number={points[selected]} />
       <Button handleClick={voteAnecdote} text="vote"/>
-      <Button handleClick={nextAnecdote} text="next anecdote"/>
+      <Button handleClick={() => setSelected(generateRandomNumber)} text="next anecdote"/>
+
+      <h1>Anecdote with most votes</h1>
+      <div>
+        {anecdotes[points.indexOf(maxVote)]}
+      </div>
+      <Votes number={maxVote} />
     </div>
   )
 }
