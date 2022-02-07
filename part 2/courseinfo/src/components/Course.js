@@ -1,17 +1,21 @@
 import React from 'react'
 import Part from './Part'
+import Header from './Header'
+import Total from './Total'
 
-const Course = ({ parts }) =>{
+const Course = ({ course }) =>{
   
   return (
-    <ul>
-      {parts.map(part =>
-        // <li key={part.id}>{part.name} {part.exercises}</li>  
-        <Part key={part.id} part={part}/>
-      )}
-    </ul>
+    <div>
+      <Header text={course.name}/>
+      
+        {course.parts.map(part =>  
+          <Part key={part.id} part={part}/>
+        )}
+      
+      <Total parts={course.parts}/>
+    </div>
   )
 }
-
 
 export default Course
