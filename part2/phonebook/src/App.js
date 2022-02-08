@@ -1,5 +1,45 @@
 import React, { useState } from 'react'
 
+const Filter = ({ filter, setFilter}) => {
+  const handleFilterChange = (event) => {
+    setFilter(event.target.value)
+  }
+
+  return (
+    <div>
+      filter shown with<input value={filter} onChange={handleFilterChange} />
+    </div>
+  )
+}
+
+const PersonForm = ({ addPerson, newName, handleNameChange, newPhone, handlePhoneChange }) => {
+
+  return (
+    <form onSubmit={addPerson}>
+      <div>
+        name: <input value={newName} onChange={handleNameChange} />
+      </div>
+      <div>
+        phone: <input value={newPhone} onChange={handlePhoneChange} />
+      </div>
+      <div>
+        <button type="submit">add</button>
+      </div>
+    </form>
+  )
+}
+
+const Persons = ({ personsToShow }) => {
+
+  return(
+    <>
+    {personsToShow.map(person =>
+      <div key={person.id}> {person.name} {person.phone} </div>
+    )}
+    </>
+  )
+}
+
 const App = () => {
   const [persons, setPersons] = useState([
     { name: 'Arto Hellas', phone: '040-123456', id: 1 },
@@ -8,32 +48,18 @@ const App = () => {
     { name: 'Mary Poppendieck', phone: '39-23-6423122', id: 4 }
   ])
   
-  // states and setStates 
   const [newName, setNewName] = useState('')
   const [newPhone, setNewPhone] = useState('')
   const [filter, setFilter] = useState('')
 
-  // handler for name component controller
   const handleNameChange = (event) => {
     setNewName(event.target.value)
   }
 
-  // handler for phone component controller
   const handlePhoneChange = (event) => {
     setNewPhone(event.target.value)
   }
 
-  //handler for filter component controller
-  const handleFilterChange = (event) => {
-    setFilter(event.target.value)
-  }
-
-  // control submit function:
-  // checks if the person name is already in the Array
-  // if it is, it pops an alert
-  // if it's not, creates a new object with persons params 
-  // and pushes to persons Array
-  // in the end, it resets both imnputs
   const addPerson = (event) => {
     event.preventDefault()
     if (persons.findIndex(person => person.name === newName) === -1) {
@@ -50,35 +76,24 @@ const App = () => {
     setNewPhone('')
   }
 
-  // new array to store persons, using filter
-  // if filter exists in person name, it filter
-  // else, it just returns persons
   const personsToShow = filter
-    ? persons.filter(person => person.name.toLowerCase().includes(filter))
-    : persons
+  ? persons.filter(person => person.name.toLowerCase().includes(filter))
+  : persons
 
   return (
     <div>
       <h2>Phonebook</h2>
-      <div>
-        filter shown with<input value={filter} onChange={handleFilterChange}/>
-      </div>
+      <Filter filter={filter} setFilter={setFilter}/>
       <h2>Add a new</h2>
-      <form onSubmit={addPerson}>
-        <div>
-          name: <input value={newName} onChange={handleNameChange} />
-        </div>
-        <div>
-          phone: <input value={newPhone} onChange={handlePhoneChange} />
-        </div>
-        <div>
-          <button type="submit">add</button>
-        </div>
-      </form>
+      <PersonForm
+        addPerson={addPerson}
+        newName={newName} 
+        handleNameChange={handleNameChange}
+        newPhone={newPhone}
+        handlePhoneChange={handlePhoneChange}
+        />
       <h2>Numbers</h2>
-      {personsToShow.map(person =>
-        <div key={person.id}> {person.name} {person.phone} </div>
-      )}
+      <Persons personsToShow={personsToShow}/>
     </div>
   )
 }
