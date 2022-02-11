@@ -1,38 +1,51 @@
 import axios from "axios"
 import { useState, useEffect } from 'react'
 
+const View = ({ country }) => {
+  return (
+    <>
+      <h2>{country.name.common}</h2>
+      <div>capital {country.capital}</div>
+      <div>area {country.area}</div>
+      <h4>languages:</h4>
+      <ul>
+        {Object.values(country.languages).map(language =>
+          <li>{language}</li>)}
+      </ul>
+      <img src={Object.values(country.flags)[0]} alt="flag" />
+    </>
+  )
+}
+
 const Countries = ({ countriesToShow }) => {
+  const [click, setClick] = useState('')
+
   if (countriesToShow.length > 10)
     return (<div>Too many matches, specify another filter</div>)
+    
   if (countriesToShow.length === 1) {
-    console.log(countriesToShow);
     return (
-      <div>
-      {countriesToShow.map(country =>
       <>
-        <h2>{country.name.common}</h2>
-        <div>capital {country.capital}</div>
-        <div>area {country.area}</div>
-        <h4>languages:</h4>
-        <ul>
-          {Object.values(country.languages).map(language =>
-            <li>{language}</li>)}
-        </ul>
-        <img src={Object.values(country.flags)[0]} />
+        {countriesToShow.map(country =>
+          <View country={country} />
+        )}
       </>
-      )}
-    </div>
     )
   } else {
     return (
-    <div>
-      {countriesToShow.map(country =>
-        <div key={country.fifa}>{country.name.common}</div>
-      )}
-    </div>
-  )
-}
-  
+      <div>
+        {countriesToShow.map(country =>
+          <div key={country.fifa}>
+            {country.name.common}
+            <button onClick={() => setClick(country.name.common)}>show</button>
+            {click === country.name.common && (
+              <View country={country} />
+            )}
+          </div>
+        )}
+      </div>
+    )
+  }
 }
 
 const App = () => {
