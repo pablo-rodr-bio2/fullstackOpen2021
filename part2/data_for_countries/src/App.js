@@ -2,6 +2,27 @@ import axios from "axios"
 import { useState, useEffect } from 'react'
 
 const View = ({ country }) => {
+  const api_key = process.env.REACT_APP_API_KEY
+  const [weather, setWeather] = useState()
+  const [icon, setIcon] = useState()
+
+  useEffect(() => {
+    axios
+      .get('http://api.openweathermap.org/data/2.5/weather?', {
+        params: {
+          lat: country.capitalInfo.latlng[0],
+          lon: country.capitalInfo.latlng[1],
+          units: 'metric',
+          appid: api_key
+        }
+      })
+      .then(response => {
+        setWeather(response.data)
+        setIcon(`http://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`)
+
+      })
+  }, [country.capitalInfo.latlng, api_key])
+
   return (
     <>
       <h2>{country.name.common}</h2>
@@ -10,9 +31,19 @@ const View = ({ country }) => {
       <h4>languages:</h4>
       <ul>
         {Object.values(country.languages).map(language =>
-          <li>{language}</li>)}
+          <li key={language} >{language}</li>)}
       </ul>
       <img src={Object.values(country.flags)[0]} alt="flag" />
+      <h4>Weather in {country.capital}</h4>
+      {weather && (
+        <>
+          <div>temperature {weather.main.temp} Celsius</div>
+          <img src={icon} alt={weather.weather[0].description}></img>
+          <div>wind {weather.wind.speed} m/s</div>
+        </>
+      )}
+
+
     </>
   )
 }
@@ -22,12 +53,12 @@ const Countries = ({ countriesToShow }) => {
 
   if (countriesToShow.length > 10)
     return (<div>Too many matches, specify another filter</div>)
-    
+
   if (countriesToShow.length === 1) {
     return (
       <>
         {countriesToShow.map(country =>
-          <View country={country} />
+          <View key={country.flag} country={country} />
         )}
       </>
     )
