@@ -33,20 +33,31 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault()
     if (persons.findIndex(person => person.name === newName) === -1) {
-      const nameObject = {
+
+      const newPerson = {
         name: newName,
         number: newPhone,
         id: (persons.length + 1)
       }
 
       personService
-        .create(nameObject)
+        .create(newPerson)
         .then(returnedPerson => {
           setPersons(persons.concat(returnedPerson))
         })
 
     } else {
-      window.alert(`${newName} is already added to phonebook`)
+      const confirm = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
+      if(confirm) {
+
+        const updatedPerson = persons.find(person => person.name == newName)
+        updatedPerson.number = newPhone
+        personService
+          .update(updatedPerson.id, updatedPerson)
+          .then(returnedPerson => {
+            setPersons(persons.map(person => person.name !== newName ? person : returnedPerson))
+          })
+      }
     }
     setNewName('')
     setNewPhone('')
