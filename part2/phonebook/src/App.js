@@ -39,9 +39,9 @@ const App = () => {
       const newPerson = {
         name: newName,
         number: newPhone,
-        id: (persons.length + 1)
+        id: (persons.length + 2)
       }
-
+      
       personService
         .create(newPerson)
         .then(returnedPerson => {
@@ -54,9 +54,9 @@ const App = () => {
 
     } else {
       const confirm = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
-      if (confirm) {
 
-        const updatedPerson = persons.find(person => person.name == newName)
+      if (confirm) {
+        const updatedPerson = persons.find(person => person.name === newName)
         updatedPerson.number = newPhone
         personService
           .update(updatedPerson.id, updatedPerson)
@@ -66,6 +66,13 @@ const App = () => {
               setCreatedMessage('')
             }, 5000)
             setPersons(persons.map(person => person.name !== newName ? person : returnedPerson))
+          })
+          .catch(error => {
+            setCreatedMessage(`${newName} was already deleted`)
+            setTimeout(() => {
+              setCreatedMessage('')
+            }, 5000)
+
           })
       }
     }
