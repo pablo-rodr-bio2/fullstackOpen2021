@@ -1,10 +1,12 @@
 import { useState, useEffect } from 'react'
 import personService from './services/persons'
 import Person from './components/Person'
+import Notification from './components/Notification'
 
 
 const App = () => {
   const [persons, setPersons] = useState([])
+  const [createdMessage, setCreatedMessage] = useState('')
 
   useEffect(() => {
     personService
@@ -43,18 +45,26 @@ const App = () => {
       personService
         .create(newPerson)
         .then(returnedPerson => {
+          setCreatedMessage(`Added ${returnedPerson.name} to phonebook`)
+          setTimeout(() => {
+            setCreatedMessage('')
+          }, 5000)
           setPersons(persons.concat(returnedPerson))
         })
 
     } else {
       const confirm = window.confirm(`${newName} is already added to phonebook, replace the old number with a new one?`)
-      if(confirm) {
+      if (confirm) {
 
         const updatedPerson = persons.find(person => person.name == newName)
         updatedPerson.number = newPhone
         personService
           .update(updatedPerson.id, updatedPerson)
           .then(returnedPerson => {
+            setCreatedMessage(`Updated ${returnedPerson.name} to ${returnedPerson.number}`)
+            setTimeout(() => {
+              setCreatedMessage('')
+            }, 5000)
             setPersons(persons.map(person => person.name !== newName ? person : returnedPerson))
           })
       }
@@ -63,17 +73,17 @@ const App = () => {
     setNewPhone('')
   }
 
-  const deletePerson = (person) =>{
+  const deletePerson = (person) => {
     const confirm = window.confirm(`Do you want to delete ${person.name} phone?`)
 
-    if(confirm){
+    if (confirm) {
       personService
-      .deletePerson(person.id)
-      .then(persons2 =>{
-        setPersons(persons2)
-      })
-    }  
-      
+        .deletePerson(person.id)
+        .then(persons2 => {
+          setPersons(persons2)
+        })
+    }
+
   }
 
   const personsToShow = filter
@@ -84,6 +94,7 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      <Notification message={createdMessage} />
       <div>
         filter shown with<input value={filter} onChange={handleFilterChange} />
       </div>
